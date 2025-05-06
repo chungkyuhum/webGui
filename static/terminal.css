@@ -1,0 +1,65 @@
+/* UART */
+.uart_container {
+    display: flex;          /* configとbuttonを横並びにする */
+    align-items: flex-end;  /* configとbuttonの下を揃える */
+    gap: 10px;              /* configとbuttonの間を空ける */
+}
+.uart_table {
+    flex: 1;                /* containerのスペースを埋める */
+}
+.uart_row {
+    display: flex;          /* cellを横並びにする */
+}
+.uart_cell {
+    display: flex;          /* labelを横並びにする */
+    flex: 1;                /* rowのスペースを埋める */
+    flex-direction: column; /* 子要素を縦方向に配置する */
+}
+.uart_button {
+    padding: 4px;
+    background-color: green;
+    color: white;
+    cursor: pointer;
+}
+.uart_button.connected {
+    background-color: red;
+}
+.uart_input {
+    display: flex;          /* labelとinputを横並びにする */
+}
+.uart_input input {
+    outline: none;
+    width: 100%;
+}
+#uart_output, .uart_input label, .uart_input input{
+    font-family: 'BIZ UDGothic', monospace;
+    background-color: black;
+    color: white;
+    font-size: 16px;
+}
+#uart_output {
+    height: 300px;
+    overflow-y: auto;       /* 垂直スクロールバーを表示する */
+    text-align: left;
+    padding: 4px;
+    line-height: 1.4em;
+    white-space: pre-wrap;  /* 改行や空白を保持する */
+}
+/* ATコマンド */
+.atCom_container {
+    display: flex;          /* configとbuttonを横並びにする */
+    align-items: flex-end;  /* configとbuttonの下を揃える */
+    gap: 10px;              /* configとbuttonの間を空ける */
+}
+.atCom_table {
+    flex: 1;                /* containerのスペースを埋める */
+}
+.atCom_row {
+    display: flex;          /* cellを横並びにする */
+}
+.atCom_cell {
+    display: flex;          /* labelを横並びにする */
+    flex: 1;                /* rowのスペースを埋める */
+    flex-direction: column; /* 子要素を縦方向に配置する */
+    width: 80px;
+}

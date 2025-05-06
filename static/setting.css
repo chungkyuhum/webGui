@@ -1,0 +1,18 @@
+/* セッティング */
+#setting label {
+    display: inline-block;
+    width: 150px; /* 幅を100ピクセルに設定 */
+    text-align: right; /* ラベル内のテキストを右寄せ */
+    margin-right: 10px; /* ラベルと入力フィールドの間にスペースを追加 */
+}
+#setting input[type='text'],
+#setting input[type='password'] {
+    width: 150px;
+    padding: 8px;
+    box-sizing: border-box; /* padding, border を含めた幅にする */
+}
+#setting select {
+    width: 150px;
+    padding: 8px;
+    box-sizing: border-box; /* padding, border を含めた幅にする */
+}

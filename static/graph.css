@@ -1,0 +1,10 @@
+/* グラフのスタイル */
+.graph_container {
+    width: 100%;
+    max-width: 600px; /* グラフの最大幅 */
+    margin: 20px auto; /* 中央配置 */
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+}

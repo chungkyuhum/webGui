@@ -1,0 +1,83 @@
+<br>
+<table class="info">
+    <tr><td>接続状態</td><td id="connectionStatus"></td></tr>
+    <tr><td>接続先</td><td id="connectedTo"></td></tr>
+    <tr><td>RSSI</td><td id="rssiValue"></td></tr>
+</table>
+<br>
+<div class="graph_container">
+    <canvas id="rssiChartCanvas" width="500" height="200"></canvas>
+</div>
+<script>
+    window.onload = function() {
+        // テーブルの要素を取得
+        const connectionStatusElement = document.getElementById('connectionStatus');
+        const connectedToElement = document.getElementById('connectedTo');
+        const rssiValueElement = document.getElementById('rssiValue');
+
+        // 接続状態と接続先を更新する例（実際の値に置き換えてください）
+        connectionStatusElement.textContent = '接続中';
+        connectedToElement.textContent = '00.11.22.33.44.55';
+
+        // SmoothieChartのインスタンスを作成
+        const rssiChart = new SmoothieChart({
+            millisPerPixel: 1000,   // x軸の時間解像度(1ピクセルあたりのミリ秒）
+            enableDpiScaling: true, // 高DPIディスプレイ対応
+            maxValue: 0,            // Y軸の最大値
+            minValue: -100,         // Y軸の最小値
+            tooltip: true,          // マウスオーバーで値をポップアップ表示
+            grid: {
+                fillStyle: '#ffffff',                   // 背景を白色
+                strokeStyle: 'rgba(128,128,128,0.3)',   // グリッド線を灰色
+                verticalSections: 5,                    // Y軸の線の数
+                borderVisible: false,
+                lineWidth: 1,
+                millisPerLine: 60000,                   // 1分ごとに線を引く
+            },
+            labels: {
+                fillStyle: '#000000',                   // ラベルを黒色
+                precision: 0                            // 少数点以下を0桁
+            },
+            // yRangeFunction: function(range) {
+            //     return { min: -100, max: 0 };           // Y軸の範囲を固定(-100〜0)
+            // },
+            timestampFormatter: function(date) {        // x軸のタイムスタンプ形式
+                const hours = date.getHours();
+                const minutes = date.getMinutes();
+                return `${hours}:${minutes}`;
+            },
+        });
+
+        // Canvas要素を取得
+        const rssiChartCanvas = document.getElementById('rssiChartCanvas');
+
+        // SmoothieChartをCanvasに接続
+        rssiChart.streamTo(rssiChartCanvas, 1000); // 1000ms間隔で更新
+
+        // グラフに表示するデータ系列を作成
+        const rssiSeries = new TimeSeries();
+
+        // SmoothieChartにデータ系列を追加
+        rssiChart.addTimeSeries(rssiSeries, {
+            strokeStyle: '#ff7f50', // 線の色 (オレンジ)
+            lineWidth: 2,             // 線の太さ
+            fillStyle: 'rgba(255, 127, 80, 0.3)', // 塗りつぶしの色 (薄いオレンジ)
+        });
+
+        // 1秒ごとにRSSIの値を更新
+        setInterval(updateRssi, 1000);
+
+        // 1秒ごとにRSSIの値を更新する関数
+        function updateRssi() {
+            // RSSIの値を取得する処理を記述します
+            // 例として、0から-100の間のランダムな値を生成します
+            const rssiValue = -Math.floor(Math.random() * 11 + 60);
+            // 現在時刻とRSSIの値をデータ系列に追加
+            rssiSeries.append(new Date().getTime(), rssiValue);
+            // テーブルのRSSIの値を更新
+            rssiValueElement.textContent = rssiValue;
+            // デバッグ用
+            // console.log("RSSI:", rssiValue);
+        }
+    }
+</script>

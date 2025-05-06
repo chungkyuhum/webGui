@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>MegaChips</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='common.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='status.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='graph.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='setting.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='terminal.css') }}">
+    <script src="{{ url_for('static', filename='smoothie.js') }}"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/smoothie@1.36.0/smoothie.js"></script> -->
+</head>
+<body>
+    <div id="header">
+        <h3>MegaChips</h3>
+    </div>
+    <div id="tab">
+        <button class="tablinks" onclick="openTab(event, 'status')" id="defaultOpen">ステータス</button>
+        <button class="tablinks" onclick="openTab(event, 'graph')">グラフ</button>
+        <button class="tablinks" onclick="openTab(event, 'setting')">HaLow設定</button>
+        <button class="tablinks" onclick="openTab(event, 'terminal')">ターミナル</button>
+    </div>
+    <div id="status" class="tabcontent">
+        {% include 'status.html' %}
+    </div>
+    <div id="graph" class="tabcontent">
+        {% include 'graph.html' %}
+    </div>
+    <div id="setting" class="tabcontent">
+        {% include 'setting.html' %}
+    </div>
+    <div id="terminal" class="tabcontent">
+        {% include 'terminal.html' %}
+    </div>
+    <div id="footer">
+        &copy; 2025 MegaChips
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // タブ初期表示
+            document.getElementById("defaultOpen").click();
+        });
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+</html>

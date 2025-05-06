@@ -1,0 +1,30 @@
+/* ステータス */
+.info {
+    width: 95%;
+    border-collapse: collapse;
+    margin-left: auto; /* テーブルを中央に配置 */
+    margin-right: auto; /* テーブルを中央に配置 */
+    text-align: left;
+}
+
+.info td:nth-child(1) { /* 最初の行の最初の td (左側の列) */
+    width: 40%;
+    padding: 4px;
+}
+
+.info td:nth-child(2) { /* 最初の行の 2番目の td (右側の列) */
+    width: 60%;
+    padding: 4px;
+}
+
+.info td {
+    border: 1px solid #ccc;
+    padding: 4px;
+}
+
+/* グラフ */
+#rssiChart {
+    width: 95%; /* 少し広げる */
+    height: auto; /* 高さは自動調整する場合 */
+    border: 1px solid #000; /* 既存のスタイル */
+}

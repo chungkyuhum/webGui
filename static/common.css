@@ -1,0 +1,46 @@
+/* ボディー */
+body {
+    width: 35%;
+    margin: 0 auto; /* 左右のマージンを auto にして中央配置 */
+}
+
+/* ヘッダー */
+#header {
+    background-color: hsl(210 100% 50%); /* 水色 */
+    padding: 15px; /* 少し大きく */
+    text-align: center;
+    color: white; /* 白字にする */
+}
+#header h3 { /* h3要素のスタイル */
+    text-align: left; /* 左寄せ */
+    font-weight: bold; /* 太字 */
+    margin: 0; /* h3要素のデフォルトマージンをリセット */
+}
+
+/* タブ */
+#tab {
+    overflow-x: auto; /* 横スクロール可能にする */
+    border-bottom: 1px solid #ccc;
+    display: flex; /* フレックスボックスで横並び */
+}
+#tab button {
+    background-color: #f1f1f1;
+    border: none;
+    outline: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    white-space: nowrap; /* ボタンのテキストが折り返さないように */
+}
+#tab button.active {
+    background-color: hsl(210 100% 40%);
+    color: white;
+}
+
+/* フッター */
+#footer {
+    background-color: hsl(210 100% 50%); /* 水色 */
+    padding: 15px; /* 少し大きく */
+    text-align: center;
+    color: white; /* 白字にする */
+}

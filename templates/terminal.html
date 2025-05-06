@@ -1,0 +1,317 @@
+<br>
+<div class="uart_container">
+    <div class="uart_table">
+        <div class="uart_row">
+            <div class="uart_cell">
+                <label for="port">port</label>
+                <select id="port" name="port">
+                    {% for port in serial_ports %}
+                        <option value="{{ port }}">{{ port }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="uart_cell">
+                <label for="baudrate">rate</label>
+                <select id="baudrate" name="baudrate">
+                    <option value="115200">115200</option>
+                    <option value="9600">9600</option>
+                </select>
+            </div>
+            <div class="uart_cell">
+                <label for="databits">data</label>
+                <select id="databits" name="databits">
+                    <option value="8">8</option>
+                    <option value="7">7</option>
+                </select>
+            </div>
+            <div class="uart_cell">
+                <label for="parity">parity</label>
+                <select id="parity" name="parity">
+                    <option value="none">none</option>
+                    <option value="even">even</option>
+                    <option value="odd">odd</option>
+                </select>
+            </div>
+            <div class="uart_cell">
+                <label for="stopbits">stop</label>
+                <select id="stopbits" name="stopbits">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <!-- 接続ボタンを横に置く -->
+    <button class="uart_button" onclick="uartConnect()">{% if is_connected %}切断{% else %}接続{% endif %}</button>
+</div>
+<div>
+    <br>
+    <input type="radio" id="normalMode" name="mode" value="normal" onclick="toggleMode(this.value)" checked>
+    <label for="normalMode">Normal</label>
+    <input type="radio" id="atCommandMode" name="mode" value="atCommand" onclick="toggleMode(this.value)">
+    <label for="atCommandMode">ATコマンド</label>
+    <input type="radio" id="cliMode" name="mode" value="cliCommand" onclick="toggleMode(this.value)">
+    <label for="cliMode">CLIコマンド</label>
+</div>
+<div class="atCom_container">
+    <br>
+    <div class="atCom_table">
+        <div class="atCom_row">
+            <div class="atCom_cell">
+                <label for="host">host</label>
+                <input type="text" id="host" name="host" value="{{ host }}">
+            </div>
+            <div class="atCom_cell">
+                <label for="tcpPort">tcpPort</label>
+                <input type="text" id="tcpPort" name="tcpPort" value="{{ tcp_port }}">
+            </div>
+            <div class="atCom_cell">
+                <label for="udpPort">udpPort</label>
+                <input type="text" id="udpPort" name="udpPort" value="{{ udp_port }}">
+            </div>
+            <div class="atCom_cell">
+                <label for="sendData">sendData</label>
+                <input type="text" id="sendData" name="sendData" value="{{ send_data }}">
+            </div>
+            <div class="atCom_cell">
+                <label for="socketId">socketId</label>
+                <input type="text" id="socketId" name="socketId" value="{{ socket_id }}" readonly>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="atcmdlist">
+    <br>
+    <div style="display: flex;">
+    <div style="flex: 1;">
+        <strong><span>&nbsp;---- BASIC ----</span></strong><br>
+        <input type="radio" id="at" name="at_command" value="AT" onclick="updateSelectedCommand(this)">
+        <label for="at">AT</label><br>
+        <input type="radio" id="ate1" name="at_command" value="ATE1" onclick="updateSelectedCommand(this)">
+        <label for="ate1">ATE1</label><br>
+        <input type="radio" id="ati" name="at_command" value="ATI" onclick="updateSelectedCommand(this)">
+        <label for="ati">ATI</label><br>
+        <input type="radio" id="atz" name="at_command" value="ATZ" onclick="updateSelectedCommand(this)">
+        <label for="atz">ATZ</label><br>
+        <strong><span>&nbsp;---- Wi-Fi ----</span></strong><br>
+        <input type="radio" id="at_wsetting" name="at_command" value="AT+WSETTING" onclick="updateSelectedCommand(this)">
+        <label for="at_wsetting">AT+WSETTING</label><br>
+        <input type="radio" id="at_wgetmacaddr" name="at_command" value="AT+WGETMACADDR" onclick="updateSelectedCommand(this)">
+        <label for="at_wgetmacaddr">AT+WGETMACADDR</label><br>
+        <input type="radio" id="at_wgetstate" name="at_command" value="AT+WGETSTATE" onclick="updateSelectedCommand(this)">
+        <label for="at_wgetstate">AT+WGETSTATE</label><br>
+        <input type="radio" id="at_wconnect" name="at_command" value="AT+WCONNECT" onclick="updateSelectedCommand(this)">
+        <label for="at_wconnect">AT+WCONNECT</label><br>
+        <input type="radio" id="at_wgetbssid" name="at_command" value="AT+WGETBSSID" onclick="updateSelectedCommand(this)">
+        <label for="at_wgetbssid">AT+WGETBSSID</label><br>
+        <input type="radio" id="at_wgetrssi" name="at_command" value="AT+WGETRSSI" onclick="updateSelectedCommand(this)">
+        <label for="at_wgetrssi">AT+WGETRSSI</label><br>
+        <input type="radio" id="at_wdisconnect" name="at_command" value="AT+WDISCONNECT" onclick="updateSelectedCommand(this)">
+        <label for="at_wdisconnect">AT+WDISCONNECT</label><br>
+    </div>
+    <div style="flex: 1;">
+        <input type="radio" id="at_tinit" name="at_command" value="AT+TINIT" onclick="updateSelectedCommand(this)">
+        <label for="at_tinit">AT+TINIT</label><br>
+        <strong><span>&nbsp;---- TCP ----</span></strong><br>
+        <input type="radio" id="at_topen_tcp" name="at_command" value="AT+TOPEN INET STREAM TCP" onclick="updateSelectedCommand(this)">
+        <label for="at_topen_tcp">AT+TOPEN&nbsp;TCP</label><br>
+        <input type="radio" id="at_tconnect" name="at_command" value="AT+TCONNECT" onclick="updateSelectedCommand(this)">
+        <label for="at_tconnect">AT+TCONNECT</label><br>
+        <input type="radio" id="at_tsend" name="at_command" value="AT+TSEND" onclick="updateSelectedCommand(this)">
+        <label for="at_tsend">AT+TSEND</label><br>
+        <input type="radio" id="at_trecv" name="at_command" value="AT+TRECV" onclick="updateSelectedCommand(this)">
+        <label for="at_trecv">AT+TRECV</label><br>
+        <input type="radio" id="at_tshutdown" name="at_command" value="AT+TSHUTDOWN" onclick="updateSelectedCommand(this)">
+        <label for="at_tshutdown">AT+TSHUTDOWN</label><br>
+        <input type="radio" id="at_tclose_tcp" name="at_command" value="AT+TCLOSE" onclick="updateSelectedCommand(this)">
+        <label for="at_tclose_tcp">AT+TCLOSE</label><br>
+        <strong><span>&nbsp;---- UDP ----</span></strong><br>
+        <input type="radio" id="at_topen_udp" name="at_command" value="AT+TOPEN INET DGRAM UDP" onclick="updateSelectedCommand(this)">
+        <label for="at_topen_udp">AT+TOPEN&nbsp;UDP</label><br>
+        <input type="radio" id="at_tsendto" name="at_command" value="AT+TSENDTO" onclick="updateSelectedCommand(this)">
+        <label for="at_tsendto">AT+TSENDTO</label><br>
+        <input type="radio" id="at_recvfrom" name="at_command" value="AT+TRECVFROM" onclick="updateSelectedCommand(this)">
+        <label for="at_recvfrom">AT+TRECVFROM</label><br>
+        <input type="radio" id="at_tclose_udp" name="at_command" value="AT+TCLOSE" onclick="updateSelectedCommand(this)">
+        <label for="at_tclose_udp">AT+TCLOSE</label><br>
+    </div>
+    </div>
+</div>
+<br>
+<div class="uart_input">
+    <label for="terminalInput">></label>
+    <input type="text" id="terminalInput" name="terminalInput" autocomplete="off">
+</div>
+<div id="uart_output">
+</div>
+<br>
+<script>
+    // const uartButton = document.getElementById('.uart_button');
+    const uartButton = document.querySelector('.uart_button');
+    let isConnected = false; // 初期状態は切断
+
+    function scrollToBottom() {
+        const uart_output = document.getElementById('uart_output');
+        uart_output.scrollTop = uart_output.scrollHeight;
+    }
+
+    function uartConnect() {
+        const port = document.getElementById('port').value;
+        const baudrate = document.getElementById('baudrate').value;
+        const databits = document.getElementById('databits').value;
+        const parity = document.getElementById('parity').value;
+        const stopbits = document.getElementById('stopbits').value;
+
+        fetch("/uartConnect", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `connected=${!isConnected}&port=${port}&baudrate=${baudrate}&databits=${databits}&parity=${parity}&stopbits=${stopbits}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            isConnected = data.connected;
+            uartButton.textContent = isConnected ? '切断' : '接続';
+            if (isConnected) {
+                uartButton.classList.add('connected');
+                document.getElementById('uart_output').innerHTML += `<span style="color: green;">${data.message}</span><br>`;
+            } else {
+                uartButton.classList.remove('connected');
+                document.getElementById('uart_output').innerHTML += `<span style="color: red;">${data.message}</span><br>`;
+            }
+            scrollToBottom();
+        })
+        .catch(error => {
+            console.error("Connection error:", error);
+            document.getElementById('uart_output').innerHTML += `<span style="color: red;">Connection error: ${error}</span><br>`;
+            scrollToBottom();
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        scrollToBottom(); // 初期スクロール
+    });
+
+    document.getElementById("terminalInput").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            const input = this.value;
+            this.value = "";
+        
+            // // 入力コマンドを画面に表示（エコー）
+            // const uart_output = document.getElementById("uart_output");
+            // const userLine = document.createElement("div");
+            // userLine.textContent = "> " + input;
+            // uart_output.appendChild(userLine);
+        
+            fetch("/uartSend", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({ terminalInput: input })
+            })
+            .then(response => response.text())
+            .then(data => {
+                const responseLine = document.createElement("div");
+                responseLine.textContent = data;
+                uart_output.appendChild(responseLine);
+                uart_output.scrollTop = uart_output.scrollHeight; // スクロール一番下へ
+            });
+        }
+    });
+
+    // カーソルを入力フィールドへ
+    document.addEventListener('DOMContentLoaded', function() {
+        const uart_output = document.getElementById('uart_output');
+        const radioGroup = document.querySelectorAll('input[name="at_command"]');
+        const terminalInput = document.getElementById('terminalInput');
+
+        uart_output.addEventListener('click', function() {
+            terminalInput.focus(); // カーソルを移動
+        });
+        radioGroup.forEach(function(radio) {
+            radio.addEventListener('click', function() {
+                terminalInput.focus(); // カーソルを移動
+            });
+        });
+    });
+</script>
+<script>
+    let currentSelectedCommand = '';
+
+    function updateSelectedCommand(radio) {
+        const commandValue = radio.value;
+        let dynamicCommandToSend = commandValue;
+
+        if (commandValue === 'AT+WSETTING') {
+            const ssid = document.getElementById('ssid').value;
+            const password = document.getElementById('password').value;
+            const encryption = document.getElementById('encryption').value;
+            const bssid = document.getElementById('bssid').value;
+            dynamicCommandToSend = `AT+WSETTING ${ssid} ${password} ${encryption} ${bssid}`;
+        } else if (commandValue === 'AT+TINIT') {
+            const ip = document.getElementById('ip').value;
+            const netmask = document.getElementById('netmask').value;
+            const dns = document.getElementById('dns').value;
+            const gateway = document.getElementById('gateway').value;
+            dynamicCommandToSend = `AT+TINIT False ${ip} ${netmask} ${dns} ${gateway}`;
+        } else if (commandValue === 'AT+TCONNECT') {
+            const socketId = document.getElementById('socketId').value;
+            const host = document.getElementById('host').value;
+            const tcpport = document.getElementById('tcpPort').value;
+            dynamicCommandToSend = `AT+TCONNECT ${socketId} ${host} ${tcpport}`;
+        } else if (commandValue === 'AT+TSEND') {
+            const socketId = document.getElementById('socketId').value;
+            const sendData = document.getElementById('sendData').value;
+            dynamicCommandToSend = `AT+TSEND ${socketId} ${sendData} ${sendData.length} 0`;
+        } else if (commandValue === 'AT+TRECV') {
+            const socketId = document.getElementById('socketId').value;
+            dynamicCommandToSend = `AT+TRECV ${socketId} 0`;
+        } else if (commandValue === 'AT+TSENDTO') {
+            const socketId = document.getElementById('socketId').value;
+            const sendData = document.getElementById('sendData').value;
+            const host = document.getElementById('host').value;
+            const udpport = document.getElementById('udpPort').value;
+            dynamicCommandToSend = `AT+TSENDTO ${socketId} ${sendData} ${sendData.length} 0 ${host} ${udpport}`;
+        } else if (commandValue === 'AT+TRECVFROM') {
+            const socketId = document.getElementById('socketId').value;
+            dynamicCommandToSend = `AT+TRECVFROM ${socketId} 0`;
+        } else if (commandValue === 'AT+TCLOSE') {
+            const socketId = document.getElementById('socketId').value;
+            dynamicCommandToSend = `AT+TCLOSE ${socketId}`;
+        } else if (commandValue === 'AT+TSHUTDOWN') {
+            const socketId = document.getElementById('socketId').value;
+            dynamicCommandToSend = `AT+TSHUTDOWN ${socketId} RDWR`;
+        }
+        
+        // currentSelectedCommand = dynamicCommandToSend;
+        // const selectedCommandDiv = document.getElementById('selectedCommand');
+        // if (selectedCommandDiv) {
+        //     selectedCommandDiv.textContent = currentSelectedCommand;
+        // }
+
+        // input要素に値を設定します。
+        currentSelectedCommand = dynamicCommandToSend;
+        const terminalInput = document.getElementById('terminalInput');
+        terminalInput.value = currentSelectedCommand;
+    }
+
+</script>
+<script>
+    const atComContainer = document.querySelector('.atCom_container');
+    const atcmdlistDiv = document.getElementById('atcmdlist');
+
+    function toggleMode(mode) {
+        if (mode === 'normal' || mode === 'cliCommand') {
+            atComContainer.style.display = 'none';
+            atcmdlistDiv.style.display = 'none';
+        } else if (mode === 'atCommand') {
+            atComContainer.style.display = 'block';
+            atcmdlistDiv.style.display = 'block';
+        }
+    }
+
+    // 初期表示でNormalモードにしておく
+    document.getElementById('normalMode').checked = true;
+    toggleMode('normal'); // 初期表示を設定
+</script>

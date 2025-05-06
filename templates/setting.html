@@ -1,0 +1,101 @@
+<br>
+<!--
+<div>
+    <label>時刻</label>
+    <span id="time-display"></span>
+    <button onclick="syncTime()">同期</button>
+</div>
+<br>
+-->
+<form action="/save" method="post">
+    <div>
+        <label for="ssid">SSID</label>
+        <input type="text" id="ssid" name="ssid" value="{{ ssid }}" required maxlength="16">
+    </div>
+    <div>
+        <label for="password">パスワード</label>
+        <input type="password" id="password" name="password" value="{{ password }}" required maxlength="16">
+        <input type="checkbox" id="showPassword">
+        <span>表示</span>
+    </div>
+    <div>
+        <label for="encryption">暗号化</label>
+        <select id="encryption" name="encryption">
+            <option value="SAE" {% if encryption == "SAE" %}selected{% endif %}>SAE</option>
+            <option value="OWE" {% if encryption == "OWE" %}selected{% endif %}>OWE</option>
+            <option value="OPEN" {% if encryption == "OPEN" %}selected{% endif %}>OPEN</option>
+        </select>
+    </div>
+    <div>
+        <label for="bssid">BSSID</label>
+        <input type="text" id="bssid" name="bssid" value="{{ bssid }}" required maxlength="17">
+    </div>
+    <br>
+    <div>
+        <label for="ipMode">IP方式</label>
+        <select id="ipMode" name="ipMode">
+            <option value="True" {% if ip_mode %}selected{% endif %}>DHCP</option>
+            <option value="False" {% if not ip_mode %}selected{% endif %}>STATIC</option>
+        </select>
+    </div>
+    <div id="ipBlock">
+        <label for="ip">IPアドレス</label>
+        <input type="text" id="ip" name="ip" value="{{ ip }}" required maxlength="15">
+    </div>
+    <div id="netmaskBlock">
+        <label for="netmask">ネットマスク</label>
+        <input type="text" id="netmask" name="netmask" value="{{ netmask }}" required maxlength="15">
+    </div>
+    <div id="gatewayBlock">
+        <label for="gateway">ゲートウェイ</label>
+        <input type="text" id="gateway" name="gateway" value="{{ gateway }}" required maxlength="15">
+    </div>
+    <div id="dnsBlock">
+        <label for="dns">DNSサーバー</label>
+        <input type="text" id="dns" name="dns" value="{{ dns }}" required maxlength="15">
+    </div>
+    <br>
+    <div class="center-button">
+        <input type="submit" value="設定">
+    </div>
+</form>
+<br>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // チェックボックス（パスワード表示・非表示）
+        const passwordInput = document.getElementById('password');
+        const showPasswordCheckbox = document.getElementById('showPassword');
+        if (passwordInput && showPasswordCheckbox) {
+            showPasswordCheckbox.addEventListener('change', function() {
+                passwordInput.type = this.checked ? 'text' : 'password';
+            });
+        }
+
+        // IP方式
+        const ipModeSelect = document.getElementById('ipMode');
+        const ipGroup = document.getElementById('ipBlock');
+        const netmaskGroup = document.getElementById('netmaskBlock');
+        const gatewayGroup = document.getElementById('gatewayBlock');
+        const dnsGroup = document.getElementById('dnsBlock');
+
+        // 初期表示を設定
+        toggleIpFieldsVisibility();
+
+        // ipModeが変更されたときに表示/非表示を切り替える
+        ipModeSelect.addEventListener('change', toggleIpFieldsVisibility);
+
+        function toggleIpFieldsVisibility() {
+            if (ipModeSelect.value === 'True') { // DHCP
+                ipGroup.style.display = 'none';
+                netmaskGroup.style.display = 'none';
+                gatewayGroup.style.display = 'none';
+                dnsGroup.style.display = 'none';
+            } else { // STATIC
+                ipGroup.style.display = 'block';
+                netmaskGroup.style.display = 'block';
+                gatewayGroup.style.display = 'block';
+                dnsGroup.style.display = 'block';
+            }
+        }
+    });
+</script>
