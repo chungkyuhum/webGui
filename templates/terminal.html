@@ -137,6 +137,64 @@
     </div>
     </div>
 </div>
+<div class="cliCom_container">
+    <br>
+    <div class="cliCom_table">
+        <div class="cliCom_row">
+            <div class="cliCom_cell">
+                <label for="host">host</label>
+                <input type="text" id="host" name="host" value="{{ host }}">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="clicmdlist">
+    <br>
+    <div style="display: flex;">
+    <div style="flex: 1;">
+        <strong><span>&nbsp;---- wifi ----</span></strong><br>
+        <input type="radio" id="wifi_connect" name="cli_command" value="wifi connect" onclick="updateSelectedCommand(this)">
+        <label for="wifi_connect">wifi connect</label><br>
+        <input type="radio" id="wifi_rssi" name="cli_command" value="wifi rssi" onclick="updateSelectedCommand(this)">
+        <label for="wifi_rssi">wifi rssi</label><br>
+        <input type="radio" id="wifi_bssid" name="cli_command" value="wifi bssid" onclick="updateSelectedCommand(this)">
+        <label for="wifi_bssid">wifi bssid</label><br>
+        <input type="radio" id="wifi_macaddr" name="cli_command" value="wifi macaddr" onclick="updateSelectedCommand(this)">
+        <label for="wifi_macaddr">wifi macaddr</label><br>
+        <strong><span>&nbsp;---- iperf ----</span></strong><br>
+        <input type="radio" id="iperf_tcpcli" name="cli_command" value="iperf tcpcli" onclick="updateSelectedCommand(this)">
+        <label for="iperf_tcpcli">iperf tcpcli</label><br>
+        <input type="radio" id="iperf_udpcli" name="cli_command" value="iperf udpcli" onclick="updateSelectedCommand(this)">
+        <label for="iperf_udpcli">iperf udpcli</label><br>
+        <input type="radio" id="iperf_tcpsvr" name="cli_command" value="iperf tcpsvr" onclick="updateSelectedCommand(this)">
+        <label for="iperf_tcpsvr">iperf tcpsvr</label><br>
+        <input type="radio" id="iperf_udpsvr" name="cli_command" value="iperf udpsvr" onclick="updateSelectedCommand(this)">
+        <label for="iperf_udpsvr">iperf udpsvr</label><br>
+    </div>
+    <div style="flex: 1;">
+        <strong><span>&nbsp;---- ping ----</span></strong><br>
+        <input type="radio" id="ping" name="cli_command" value="ping" onclick="updateSelectedCommand(this)">
+        <label for="ping">ping</label><br>
+        <strong><span>&nbsp;---- config ----</span></strong><br>
+        <input type="radio" id="config_all" name="cli_command" value="config all" onclick="updateSelectedCommand(this)">
+        <label for="config_all">config all</label><br>
+        <input type="radio" id="config_commit" name="cli_command" value="config commit" onclick="updateSelectedCommand(this)">
+        <label for="config_commit">config commit</label><br>
+        <input type="radio" id="config_ssid" name="cli_command" value="config ssid" onclick="updateSelectedCommand(this)">
+        <label for="config_ssid">config ssid</label><br>
+        <input type="radio" id="config_passwdrd" name="cli_command" value="config passwdrd" onclick="updateSelectedCommand(this)">
+        <label for="config_passwdrd">config passwdrd</label><br>
+        <input type="radio" id="config_ipaddr" name="cli_command" value="config ipaddr" onclick="updateSelectedCommand(this)">
+        <label for="config_ipaddr">config ipaddr</label><br>
+        <input type="radio" id="config_netmask" name="cli_command" value="config netmask" onclick="updateSelectedCommand(this)">
+        <label for="config_netmask">config netmask</label><br>
+        <input type="radio" id="config_gateway" name="cli_command" value="config gateway" onclick="updateSelectedCommand(this)">
+        <label for="config_gateway">config gateway</label><br>
+        <input type="radio" id="config_dnssvr" name="cli_command" value="config dnssvr" onclick="updateSelectedCommand(this)">
+        <label for="config_dnssvr">config dnssvr</label><br>
+    </div>
+    </div>
+</div>
 <br>
 <div class="uart_input">
     <label for="terminalInput">></label>
@@ -196,7 +254,7 @@
     document.getElementById("terminalInput").addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
             e.preventDefault();
-            const input = this.value;
+            const input = this.value.trim();  // 前後の空白を除去
             this.value = "";
         
             // // 入力コマンドを画面に表示（エコー）
@@ -212,10 +270,21 @@
             })
             .then(response => response.text())
             .then(data => {
-                const responseLine = document.createElement("div");
-                responseLine.textContent = data;
-                uart_output.appendChild(responseLine);
-                uart_output.scrollTop = uart_output.scrollHeight; // スクロール一番下へ
+                const lines = data.trim().split(/\r?\n/);  // 複数行対応
+                for (let line of lines) {
+                    const responseLine = document.createElement("div");
+                    responseLine.textContent = line;
+                    uart_output.appendChild(responseLine);
+                    uart_output.scrollTop = uart_output.scrollHeight;
+
+                    // 数字だけなら socketId に格納
+                    if (/^\d+$/.test(line.trim())) {
+                        const socketIdField = document.getElementById("socketId");
+                        if (socketIdField) {
+                            socketIdField.value = line.trim();
+                        }
+                    }
+                }
             });
         }
     });
@@ -223,18 +292,24 @@
     // カーソルを入力フィールドへ
     document.addEventListener('DOMContentLoaded', function() {
         const uart_output = document.getElementById('uart_output');
-        const radioGroup = document.querySelectorAll('input[name="at_command"]');
+        const radioGroupAt = document.querySelectorAll('input[name="at_command"]');
+        const radioGroupCli = document.querySelectorAll('input[name="cli_command"]');
         const terminalInput = document.getElementById('terminalInput');
 
         uart_output.addEventListener('click', function() {
             terminalInput.focus(); // カーソルを移動
         });
-        radioGroup.forEach(function(radio) {
+        radioGroupAt.forEach(function(radio) {
             radio.addEventListener('click', function() {
                 terminalInput.focus(); // カーソルを移動
             });
         });
-    });
+        radioGroupCli.forEach(function(radio) {
+            radio.addEventListener('click', function() {
+                terminalInput.focus(); // カーソルを移動
+            });
+        });
+});
 </script>
 <script>
     let currentSelectedCommand = '';
@@ -282,6 +357,15 @@
         } else if (commandValue === 'AT+TSHUTDOWN') {
             const socketId = document.getElementById('socketId').value;
             dynamicCommandToSend = `AT+TSHUTDOWN ${socketId} RDWR`;
+        } else if (commandValue === 'ping') {
+            const host = document.getElementById('host').value;
+            dynamicCommandToSend = `ping ${host}`;
+        } else if (commandValue === 'iperf tcpcli') {
+            const host = document.getElementById('host').value;
+            dynamicCommandToSend = `iperf tcpcli,${host}`;
+        } else if (commandValue === 'iperf udpcli') {
+            const host = document.getElementById('host').value;
+            dynamicCommandToSend = `iperf udpcli,${host}`;
         }
         
         // currentSelectedCommand = dynamicCommandToSend;
@@ -300,14 +384,25 @@
 <script>
     const atComContainer = document.querySelector('.atCom_container');
     const atcmdlistDiv = document.getElementById('atcmdlist');
+    const cliComContainer = document.querySelector('.cliCom_container');
+    const clicmdlistDiv = document.getElementById('clicmdlist');
 
     function toggleMode(mode) {
-        if (mode === 'normal' || mode === 'cliCommand') {
+        if (mode === 'normal') {
             atComContainer.style.display = 'none';
             atcmdlistDiv.style.display = 'none';
+            cliComContainer.style.display = 'none';
+            clicmdlistDiv.style.display = 'none';
         } else if (mode === 'atCommand') {
             atComContainer.style.display = 'block';
             atcmdlistDiv.style.display = 'block';
+            cliComContainer.style.display = 'none';
+            clicmdlistDiv.style.display = 'none';
+        } else if (mode === 'cliCommand') {
+            atComContainer.style.display = 'none';
+            atcmdlistDiv.style.display = 'none';
+            cliComContainer.style.display = 'block';
+            clicmdlistDiv.style.display = 'block';
         }
     }
 
