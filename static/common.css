@@ -1,6 +1,6 @@
 /* ボディー */
 body {
-    width: 35%;
+    width: 40%;
     margin: 0 auto; /* 左右のマージンを auto にして中央配置 */
 }
 
@@ -35,6 +35,16 @@ body {
 #tab button.active {
     background-color: hsl(210 100% 40%);
     color: white;
+}
+
+/* 表示専用のフィールド */
+input[readonly] {
+    background-color: #eee;
+    color: #555;
+    border: none;
+    outline: none;
+    pointer-events: none; /* マウスイベント無効化 */
+    font-weight: normal;
 }
 
 /* フッター */
